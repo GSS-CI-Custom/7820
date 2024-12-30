@@ -1,0 +1,243 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.MainForm..Create(DashForm)
+Gui.MainForm..Caption("ACH Data Transfer")
+Gui.MainForm..Size(460,165)
+Gui.MainForm..MinX(0)
+Gui.MainForm..MinY(0)
+Gui.MainForm..Position(0,0)
+Gui.MainForm..AlwaysOnTop(False)
+Gui.MainForm..FontName("Tahoma")
+Gui.MainForm..FontSize(8.25)
+Gui.MainForm..ControlBox(True)
+Gui.MainForm..MaxButton(True)
+Gui.MainForm..MinButton(True)
+Gui.MainForm..MousePointer(0)
+Gui.MainForm..Moveable(True)
+Gui.MainForm..Sizeable(True)
+Gui.MainForm..ShowInTaskBar(True)
+Gui.MainForm..TitleBar(True)
+Gui.MainForm..Event(UnLoad,MainForm_UnLoad)
+Gui.MainForm.cmdSelectFile.Create(Button)
+Gui.MainForm.cmdSelectFile.Enabled(True)
+Gui.MainForm.cmdSelectFile.Visible(True)
+Gui.MainForm.cmdSelectFile.Zorder(0)
+Gui.MainForm.cmdSelectFile.Size(26,20)
+Gui.MainForm.cmdSelectFile.Position(423,70)
+Gui.MainForm.cmdSelectFile.Caption("")
+Gui.MainForm.cmdSelectFile.FontName("Tahoma")
+Gui.MainForm.cmdSelectFile.FontSize(8)
+Gui.MainForm.cmdSelectFile.ImageAlign(8)
+Gui.MainForm.cmdSelectFile.SvgPicture("icon_browser_color")
+Gui.MainForm.cmdSelectFile.Event(Click,cmdSelectFile_Click)
+Gui.MainForm.txtFile.Create(TextBox,"",True,407,26,0,10,70,True,0,"Tahoma",8,,1)
+Gui.MainForm.lbl1.Create(Label,"Select an option:",True,138,19,0,10,10,True,0,"Tahoma",8,,0,0)
+Gui.MainForm.lbl1.BorderStyle(0)
+Gui.MainForm.lbl1.FontStyle(True,False,False,False,False)
+Gui.MainForm.lbl2.Create(Label,"Select file:",True,87,19,0,10,50,True,0,"Tahoma",8,,0,0)
+Gui.MainForm.lbl2.BorderStyle(0)
+Gui.MainForm.lbl2.FontStyle(True,False,False,False,False)
+Gui.MainForm.cmdProcess.Create(Button)
+Gui.MainForm.cmdProcess.Enabled(True)
+Gui.MainForm.cmdProcess.Visible(True)
+Gui.MainForm.cmdProcess.Zorder(0)
+Gui.MainForm.cmdProcess.Size(80,15)
+Gui.MainForm.cmdProcess.Position(10,95)
+Gui.MainForm.cmdProcess.Caption("Process")
+Gui.MainForm.cmdProcess.FontName("Tahoma")
+Gui.MainForm.cmdProcess.FontSize(8)
+Gui.MainForm.cmdProcess.FontStyle(True,False,False,False,False)
+Gui.MainForm.cmdProcess.Event(Click,cmdProcess_Click)
+Gui.MainForm.optExport.Create(Option)
+Gui.MainForm.optExport.Enabled(True)
+Gui.MainForm.optExport.Visible(True)
+Gui.MainForm.optExport.Zorder(0)
+Gui.MainForm.optExport.Size(85,24)
+Gui.MainForm.optExport.Position(10,25)
+Gui.MainForm.optExport.Caption("Export")
+Gui.MainForm.optExport.FontName("Tahoma")
+Gui.MainForm.optExport.FontSize(8)
+Gui.MainForm.optExport.Event(Click,optExport_Click)
+Gui.MainForm.optImport.Create(Option)
+Gui.MainForm.optImport.Enabled(True)
+Gui.MainForm.optImport.Visible(True)
+Gui.MainForm.optImport.Zorder(0)
+Gui.MainForm.optImport.Size(86,24)
+Gui.MainForm.optImport.Position(70,25)
+Gui.MainForm.optImport.Caption("Import")
+Gui.MainForm.optImport.FontName("Tahoma")
+Gui.MainForm.optImport.FontSize(8)
+Gui.MainForm.optImport.Event(Click,optImport_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+V.Global.sError.Declare(String)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'Alejandro Noguera De Anda, 12/30/2024.
+'Features: 
+'	- This program will Allow the user to Import and Export ACH Vendor information to different company codes (Bank Account, Bank Routing No, ACH Payment Type, Email Flag, Bank Account Encrypted)
+
+Function.Intrinsic.UI.UsePixels
+F.Intrinsic.UI.SetWaitDialogAlwaysOnTop(True)
+
+'Default Values
+GUI.MainForm.optExport.Value(True)
+GUI.MainForm.lbl2.Caption("Select location to save CSV:")
+
+GUI.MainForm..Show()
+
+Program.Sub.Main.End
+
+Program.Sub.cmdSelectFile_Click.Start
+F.Intrinsic.Control.Try
+
+	V.Local.sFile.Declare(String)
+	
+	F.Intrinsic.Control.If(V.Screen.MainForm!optExport.Value,=,True)
+		F.Intrinsic.UI.ShowSaveFileDialog(".csv","",V.Local.sFile)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.UI.ShowOpenFileDialog("","",V.Local.sFile)
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.Control.If(V.Local.sFile,<>,"***CANCEL***")
+		GUI.MainForm.txtFile.Text(V.Local.sFile)
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}","GCG_7820_TransferACH.g2u",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Global.sError)
+	F.Intrinsic.UI.Msgbox(V.Global.sError)
+	F.Intrinsic.Control.End 
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdSelectFile_Click.End
+
+Program.Sub.optExport_Click.Start
+GUI.MainForm.lbl2.Caption("Select location to save CSV:")
+Program.Sub.optExport_Click.End
+
+Program.Sub.optImport_Click.Start
+GUI.MainForm.lbl2.Caption("Select CSV file to analyze:")
+Program.Sub.optImport_Click.End
+
+Program.Sub.cmdProcess_Click.Start
+F.Intrinsic.Control.Try
+
+	F.Intrinsic.Control.If(V.Screen.MainForm!optExport.Value,=,True)
+		F.Intrinsic.Control.CallSub("Export")
+	F.Intrinsic.Control.ElseIf(V.Screen.MainForm!optImport.Value,=,True)
+		F.Intrinsic.Control.CallSub("Import")
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}","GCG_7820_TransferACH.g2u",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Global.sError)
+	F.Intrinsic.UI.Msgbox(V.Global.sError)
+	F.Intrinsic.Control.End 
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdProcess_Click.End
+
+Program.Sub.Export.Start
+F.Intrinsic.Control.Try
+	
+	V.Local.lCounter.Declare(Long)
+	V.Local.sFilePath.Declare(String)
+	V.Local.sBankAccount.Declare(String)
+	V.Local.bFileExtension.Declare(Boolean)
+	
+	V.Local.sFilePath.Set(V.Screen.MainForm!txtFile.Text)
+	
+	F.Intrinsic.UI.InvokeWaitDialog("Generating CSV with ACH information")
+	
+	'Creating Datatable with ACH information, including encrypted data. 
+	F.ODBC.Connection!con.OpenCompanyConnection(600)
+	F.Data.Datatable.CreateFromSQL("dtVendorACH","con","select rtrim(A.VENDOR) as VENDOR,rtrim(A.BANK_ACCOUNT) as BANK_ACCOUNT,rtrim(A.BANK_ROUTING_NUM) as BANK_ROUTING_NUM, rtrim(A.ACH_PAYMENT_TYPE) as ACH_PAYMENT_TYPE,rtrim(A.EMAIL_FLAG) as EMAIL_FLAG,B.BANK_ACCT_ENC from VENDOR_INTL A  left join VENDOR_ENCRYPT B on A.VENDOR = B.VENDOR_ID where REC = '4' and VENDOR <> ''")
+	F.Data.Datatable.AddColumn("dtVendorACH","BANK_ACCT_DEC","String")
+	F.ODBC.Connection!con.Close()
+	
+	'Encrypted data need to be decrypted before generating the CSV file
+	F.Intrinsic.Control.For(V.Local.lCounter,0,V.DataTable.dtVendorACH.RowCount--,1)
+		F.Global.Encryption.Decrypt(V.DataTable.dtVendorACH(v.Local.lCounter).BANK_ACCT_ENC!FieldVal,V.local.sBankAccount)
+		F.Data.Datatable.SetValue("dtVendorACH",V.Local.lCounter,"BANK_ACCT_DEC",V.Local.sBankAccount)		
+	F.Intrinsic.Control.Next(V.Local.lCounter)
+	
+	'Removing data that contains eencrypted information, since it's not required on the final CSV file
+	F.Data.Datatable.RemoveColumn("dtVendorACH","BANK_ACCT_ENC")
+	'Generating export
+	F.Intrinsic.String.IsInString(V.Local.sFilePath,".csv",True,V.Local.bFileExtension)
+	F.Intrinsic.Control.If(V.Local.bFileExtension)	
+		F.Data.Datatable.SaveToCSV("dtVendorACH",V.Local.sFilePath,True)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.Build("{0}.csv",V.Local.sFilePath,V.Local.sFilePath)
+		F.Data.Datatable.SaveToCSV("dtVendorACH",V.Local.sFilePath,True)
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.Task.ShellExec(0,"OPEN",V.Local.sFilePath,"","",1)
+	
+	GUI.MainForm.txtFile.Text("")
+	F.Intrinsic.UI.CloseWaitDialog()
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}","GCG_7820_TransferACH.g2u",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Global.sError)
+	F.Intrinsic.UI.Msgbox(V.Global.sError)
+	F.Intrinsic.Control.End 
+F.Intrinsic.Control.EndTry
+Program.Sub.Export.End
+
+Program.Sub.Import.Start
+F.Intrinsic.Control.Try
+
+	V.Local.sFilePath.Declare(String)
+	V.Local.EncBA.Declare(ByteArray)
+	V.Local.sEncrypt.Declare(String)
+	V.Local.sVendor.Declare(String)
+	V.Local.sSQL.Declare(String)
+	V.Local.lCounter.Declare(Long)
+	V.Local.bLocked.Declare(Boolean)
+
+	V.Local.sFilePath.Set(V.Screen.MainForm!txtFile.Text)
+	
+	F.Intrinsic.File.IsFileLocked(V.Local.sFilePath,V.Local.bLocked)
+	F.Intrinsic.Control.If(V.Local.bLocked)
+		F.Intrinsic.UI.Msgbox("The file is currently open. Please close out of it and try again")
+		F.Intrinsic.Control.ExitSub
+	F.Intrinsic.Control.EndIf
+
+	F.Intrinsic.UI.InvokeWaitDialog("Importing ACH information")
+
+	F.ODBC.Connection!con.OpenCompanyConnection(600)
+	F.Data.Datatable.CreateFromCSV("dtVendors",V.Local.sFilePath,"String*!*String*!*String*!*String*!*String*!*String",True)
+	
+	F.Intrinsic.Control.For(V.Local.lCounter,0,V.DataTable.dtVendors.RowCount--,1)
+			
+		F.Intrinsic.String.LPad(V.DataTable.dtVendors(V.Local.lCounter).VENDOR!FieldVal,"0",6,V.Local.sVendor)
+		
+		F.Intrinsic.String.Build("update VENDOR_INTL set BANK_ACCOUNT = '{0}',BANK_ROUTING_NUM = '{1}',ACH_PAYMENT_TYPE = '{2}',EMAIL_FLAG = '{3}' where VENDOR = '{4}' and REC = '4'",V.DataTable.dtVendors(V.Local.lCounter).BANK_ACCOUNT!FieldVal,V.DataTable.dtVendors(V.Local.lCounter).BANK_ROUTING_NUM!FieldVal,V.DataTable.dtVendors(V.Local.lCounter).ACH_PAYMENT_TYPE!FieldVal,V.DataTable.dtVendors(V.Local.lCounter).EMAIL_FLAG!FieldVal,V.Local.sVendor,V.Local.sSQL)	
+		F.ODBC.Connection!con.Execute(V.Local.sSQL)
+		
+		F.Global.Encryption.Encrypt(V.DataTable.dtVendors(V.Local.lCounter).BANK_ACCT_DEC!FieldVaL,-1,0,40,V.Local.EncBA)
+		F.Intrinsic.String.ConvertBA2Hex(V.Local.EncBA,V.Local.sEncrypt)
+		
+		F.Intrinsic.String.Build("update VENDOR_ENCRYPT set BANK_ACCT_ENC = '{0}' where VENDOR_ID = '{1}'", V.Local.sEncrypt,V.Local.sVendor,V.Local.sSQL)
+		F.ODBC.Connection!con.Execute(V.Local.sSQL)
+		
+	F.Intrinsic.Control.Next(V.Local.lCounter)
+	
+	GUI.MainForm.txtFile.Text("")
+	F.Intrinsic.UI.CloseWaitDialog()
+	F.Intrinsic.UI.Msgbox("Upload Completed","ACH data import")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}","GCG_7820_TransferACH.g2u",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Global.sError)
+	F.Intrinsic.UI.Msgbox(V.Global.sError)
+	F.Intrinsic.Control.End 
+F.Intrinsic.Control.EndTry
+Program.Sub.Import.End
+
+Program.Sub.MainForm_UnLoad.Start
+F.Intrinsic.Control.End
+Program.Sub.MainForm_UnLoad.End
+
+Program.Sub.Comments.Start
+${$5$}$20.1.9112.19643$}$1
+${$6$}$anogueradeanda$}$20241230084721888$}$Brc4ySiax1SYsBxo6PAUD1l1uxdiUizTmPmbMh+robjPyY3sEw/Obx4971yF2C0NTtkjrQK8B9vihzUOmH4CeUt1yuLIAmYH
+${$7$}$File Version:1.1.20241230144721.0
+Program.Sub.Comments.End
